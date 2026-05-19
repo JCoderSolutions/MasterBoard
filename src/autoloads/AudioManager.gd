@@ -1,13 +1,21 @@
 extends Node
 
-@onready var _music_player: AudioStreamPlayer = $MusicPlayer
-@onready var _sfx_player: AudioStreamPlayer = $SFXPlayer
+var _music_player: AudioStreamPlayer
+var _sfx_player: AudioStreamPlayer
 
 var _sfx_library: Dictionary = {}
 var _music_library: Dictionary = {}
 
 func _ready() -> void:
-	pass
+	_music_player = AudioStreamPlayer.new()
+	_music_player.name = "MusicPlayer"
+	_music_player.bus = "Music"
+	add_child(_music_player)
+
+	_sfx_player = AudioStreamPlayer.new()
+	_sfx_player.name = "SFXPlayer"
+	_sfx_player.bus = "SFX"
+	add_child(_sfx_player)
 
 func play_sfx(sfx_id: String) -> void:
 	if not _sfx_library.has(sfx_id):
