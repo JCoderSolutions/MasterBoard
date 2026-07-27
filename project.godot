@@ -11,23 +11,23 @@ config_version=5
 [application]
 
 config/name="MasterBoard"
-config/version="4.4"
-run/main_scene="res://src/ui/MainMenu.tscn"
-config/features=PackedStringArray("4.2", "Mobile")
+config/version="0.1.0"
+run/main_scene="res://src/ui/main_menu.tscn"
+config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
-AudioManager="*res://src/autoloads/AudioManager.gd"
-CardDatabase="*res://src/autoloads/CardDatabase.gd"
-GameEvents="*res://src/autoloads/GameEvents.gd"
-TurnSystem="*res://src/autoloads/TurnSystem.gd"
+AudioManager="*res://src/autoloads/audio_manager.gd"
+CardDatabase="*res://src/autoloads/card_database.gd"
+GameEvents="*res://src/autoloads/game_events.gd"
 
 [display]
 
-window/size/viewport_width=480
-window/size/viewport_height=270
+window/size/viewport_width=270
+window/size/viewport_height=480
 window/stretch/mode="viewport"
+window/handheld/orientation=1
 
 [editor]
 

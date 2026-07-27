@@ -1,2 +1,20 @@
 # Godot 4+ specific ignores
 .godot/
+/android/
+
+# Recursos importados (se regeneran al abrir el proyecto)
+.import/
+*.import.tmp
+
+# Export: los presets suelen llevar rutas y claves de firma locales
+export_presets.cfg
+builds/
+*.apk
+*.aab
+*.keystore
+
+# Basura del sistema y del editor
+.DS_Store
+Thumbs.db
+*.tmp
+~*

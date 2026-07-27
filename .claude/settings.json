@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(godot --path . --headless*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Edit(src/**)",
+      "Edit(resources/**)",
+      "Edit(test/**)",
+      "Edit(docs/**)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Edit(project.godot)",
+      "Edit(.mcp.json)",
+      "Edit(.claude/**)"
+    ]
+  },
+  "env": {
+    "MAX_THINKING_TOKENS": "8000"
+  }
+}
