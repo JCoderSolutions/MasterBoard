@@ -16,6 +16,7 @@ enum Type {
 	UNIT_MOVED,
 	UNIT_DAMAGED,
 	UNIT_DIED,
+	PHASE_STARTED,
 }
 
 var type: Type

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="Ability" format=3]
+
+[ext_resource type="Script" path="res://src/combat/logic/effect.gd" id="1_2b23h"]
+[ext_resource type="Script" path="res://src/combat/logic/effects/move_self_effect.gd" id="2_ba1rg"]
+[ext_resource type="Script" path="res://src/combat/logic/ability.gd" id="3_uf8ql"]
+
+[sub_resource type="Resource" id="Resource_cur1s"]
+script = ExtResource("2_ba1rg")
+
+[resource]
+script = ExtResource("3_uf8ql")
+id = &"paso"
+display_name = "Paso"
+description = "Te mueves 1 casilla en horizontal o vertical."
+phase = 1
+targeting = 4
+orthogonal_only = true
+effects = Array[ExtResource("1_2b23h")]([SubResource("Resource_cur1s")])

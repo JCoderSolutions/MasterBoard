@@ -92,12 +92,25 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
   - 5 habilidades en `resources/abilities/` generadas con el motor. `embestida` es la
     prueba de la composición: `[Daño(1), Empuje(2)]` pega el doble contra el borde
     porque se suma el impacto, y eso no está programado en ningún sitio.
-- [ ] **1.9** **`Round`: selección simultánea + resolución por fases (A-12)** ← la pieza central
-  - Recoge una elección de movimiento y una de habilidad por bando
-  - Resuelve: barreras → movimiento → ataques → terreno
-  - Test: mismas elecciones + misma semilla = mismo resultado
-  - Test: los conflictos de movimiento de GDD §5 se resuelven según la tabla (rebote,
-    intercambio bloqueado, persecución permitida)
+- [x] **1.9** **`Round`: selección simultánea + resolución por fases (A-12)**
+  - **Los ataques son simultáneos: morir en la fase de ataques no cancela tu golpe.**
+    Sin eso, el orden interno de la fase decidiría partidas —justo lo que A-12 quiso
+    evitar— y el empate por doble muerte del GDD §4 sería imposible. Morir *antes*
+    (una caída al vacío al moverse) sí te deja fuera: las fases están ordenadas.
+  - Los conflictos de movimiento salen de **una sola idea**: un movimiento se ejecuta
+    en cuanto es posible, y lo que nunca llega a serlo se cancela. El intercambio es
+    un ciclo y se queda fuera solo; la persecución no lo es y funciona sola. Solo el
+    "mismo destino" necesita comprobación aparte.
+  - `Ability` gana `phase`, que determina además en qué ranura se elige. Se separa
+    `resolve()` de `apply()`: la ronda ya validó al cobrar y no puede revalidar,
+    porque un golpe cuyo objetivo se movió **tiene** que dar al aire.
+  - Nuevo evento `PhaseStarted`, siempre los cuatro. Lo necesitan la cola de animación
+    (1.23) y el indicador de fase (1.27) para no adivinar qué fase se saltó.
+  - `paso.tres`: el movimiento básico gratis y ortogonal del GDD §4, como habilidad de
+    coste 0. `Ability.orthogonal_only` existe solo por él.
+  - **Pendiente para 1.10:** GDD §5 dice que un movimiento bloqueado por una barrera
+    "se detiene contra ella"; hoy se cancela entero, porque `MoveCommand` no hace
+    movimiento parcial. Se resuelve cuando existan las barreras.
 - [ ] **1.10** Barreras con duración por carta, no global
   - Test: una barrera de 1 ronda desaparece al final de la ronda en que se puso
 - [ ] **1.11** Escudos que absorben y caducan

@@ -13,6 +13,7 @@ id = &"impulso"
 display_name = "Impulso"
 description = "Te desplazas hasta 2 casillas en línea."
 mana_cost = 1
+phase = 1
 targeting = 4
 max_range = 2
 effects = Array[ExtResource("1_cxaca")]([SubResource("Resource_yr0ie")])
