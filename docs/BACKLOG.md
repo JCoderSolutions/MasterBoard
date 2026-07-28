@@ -151,7 +151,14 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
     fase 1. No es una regla nueva, es la misma que ya existía para el daño a distancia.
   - `meditar` (restaurar, coste 1, +3) y `disipar` (quemar, coste 2, -3, alcance 2) en
     `resources/abilities/`.
-- [ ] **1.13** Condiciones de fin: vida 0 = derrota; ambos a 0 la misma ronda = empate
+- [x] **1.13** Condiciones de fin: vida 0 = derrota; ambos a 0 la misma ronda = empate
+  - `MatchResult.evaluate()` es consulta pura, no vive dentro de `Round`: el propio
+    comentario de `Round.resolve()` ya pedía un hueco entre resolver la ronda y
+    repartir el maná de la siguiente para comprobar si alguien murió, y ese hueco es
+    de quien orqueste las rondas (el bucle de partida, fase posterior), no del
+    resolver. Mismo patrón que `Grid`/`Terrain`: preguntas, no reglas que mutan.
+  - El test que demuestra que 1.9 ya lo dejó listo: dos `tajo` simultáneos que se
+    matan entre sí producen `DRAW`, no un ganador por accidente de orden.
 - [ ] **1.14** Derrumbe del tablero desde la ronda 8 (GDD §4)
   - Test: una unidad atrapada por el derrumbe muere
 
