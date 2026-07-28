@@ -190,7 +190,21 @@ abrir el editor, y el resultado es idéntico con la misma semilla y las mismas e
     propio — la puerta de atrás por la que se filtraría igual sin cambiar la firma.
   - Sin esto, un cambio futuro que le pasara la elección del jugador "ya que la
     tenemos ahí" compilaría sin avisar. Con esto, rompe un test con nombre explícito.
-- [ ] **1.16** Enumerar el espacio de acciones legales de una unidad dado su maná y kit
+- [x] **1.16** Enumerar el espacio de acciones legales de una unidad dado su maná y kit
+  - `ActionSpace` vive en `ai/`, no en `logic/` (A-06): el jugador humano no necesita el
+    producto cartesiano de sus opciones, elige habilidad y objetivo directamente en la
+    UI apoyándose en `Ability.valid_targets()`. Esto es infraestructura de decisión que
+    solo la IA recorre — 1.17 la usa para simular.
+  - Una jugada es un `RoundChoice` **completo** (ranura de movimiento × ranura de
+    acción), no pares (habilidad, objetivo) sueltos: el maná se paga de un único pozo
+    para las dos ranuras (`Round._charge()`), así que la condición real es
+    `coste_movimiento + coste_acción <= maná`, no cada coste por separado. Una
+    combinación que junte no cabe no se enumera nunca.
+  - Siempre incluye "quedarse quieto en las dos ranuras": una unidad viva nunca se
+    queda sin jugadas, aunque sea sin maná.
+  - Objetivo válido: `UNIT` no distingue amigo de enemigo (ya lo documentaba
+    `DamageEffect` desde 1.8), así que una habilidad de golpe siempre puede apuntarse a
+    uno mismo. No es un bug de la enumeración, es la regla ya existente.
 - [ ] **1.17** Evaluación por valor esperado: clonar el estado, simular las acciones posibles
   del jugador, elegir la respuesta con mejor resultado promedio
 - [ ] **1.18** Función de evaluación del tablero: vida, maná, proximidad a peligro, casillas
