@@ -60,8 +60,11 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
   - `Grid` es geometría pura; la línea de visión vive en `CombatState` porque depende
     del terreno. Solo hay líneas en las 8 direcciones: una línea Bresenham arbitraria
     no se puede prever mirando la pantalla, y una habilidad imprevisible está rota.
-- [ ] **1.6** `MoveCommand` + reglas de terreno
-  - Test: entrar en `VOID` mata y libera la casilla; `WALL` bloquea; `HAZARD` daña
+- [x] **1.6** `MoveCommand` + reglas de terreno
+  - Entrar en `VOID` mata y libera la casilla; `WALL` bloquea destino y camino.
+  - **`HAZARD` se movió a 1.9** (fase 4 de la ronda). Cobrarlo aquí lo duplicaría
+    cuando un empujón mete a alguien en la lava: el daño de terreno tiene que
+    aplicarse una sola vez, dé igual cómo llegaste a la casilla.
 - [ ] **1.7** Empuje y colisión
   - Test: empujar contra un obstáculo detiene y hace 1 de daño; contra otra unidad daña a ambas
 - [ ] **1.8** `Ability` como recurso componible: `Damage`, `Push`, `Pull`, `MoveSelf`, `Barrier`, `Shield`, `Mana`
