@@ -15,15 +15,23 @@ Una tarea está *hecha* cuando pasa sus criterios de aceptación y está commite
 
 - [x] **0.1** Alinear `project.godot`: `config/features` a 4.7, orientación portrait (D-01/A-09)
 - [x] **0.2** Crear estructura de carpetas de `ARCHITECTURE.md` A-06 con `.gitkeep`
-- [ ] **0.3** Añadir `CLAUDE.md`, `docs/GDD.md`, `docs/ARCHITECTURE.md`, este backlog
+- [x] **0.3** Añadir `CLAUDE.md`, `docs/GDD.md`, `docs/ARCHITECTURE.md`, este backlog
 - [x] **0.4** Instalar GdUnit4 en `addons/`, verificar que corre en headless
   - gdUnit4 **6.1.3**, instalado a mano desde el release de GitHub (esta máquina no tiene
     salida de red desde la terminal, SSL error 35). Requiere `--ignoreHeadlessMode`; el
     comando correcto está en `CLAUDE.md`.
-- [ ] **0.5** Añadir `.mcp.json` y `.claude/settings.json` al repo (config que viaja entre PCs)
-- [ ] **0.6** GitHub Action: correr tests en cada push a `main`
+- [x] **0.5** Añadir `.mcp.json` y `.claude/settings.json` al repo (config que viaja entre PCs)
+- [x] **0.6** GitHub Action: correr tests en cada push a `main`
+  - `.github/workflows/tests.yml`. **Sin verificar**: esta máquina no tiene red, así que
+    no se ha podido comprobar ni la URL de descarga de Godot ni que el job pase. La
+    primera ejecución en GitHub es la prueba real.
 - [x] **0.7** Verificar `.gitignore` cubre `.godot/`, `.import/`, `export_presets.cfg`, `builds/`
 - [ ] **0.8** Importar el asset pack, verificar licencia (D-03), documentar atribución en `CREDITS.md`
+  - Bloqueado: `assets/` solo tiene `.gitkeep`, el pack no está en el repo. Lo tienes que
+    copiar tú.
+  - Cambia de alcance con el pivote: ya no hacen falta sprites de *arquetipos enemigos*
+    sino de **personajes jugables** (D-06 pide un mínimo de 3 para que exista lectura de
+    matchup). El de clembod cubre uno.
 
 **Criterio de fase:** clonas el repo en tu otra PC, abres Claude Code, y todo funciona sin
 configuración manual.

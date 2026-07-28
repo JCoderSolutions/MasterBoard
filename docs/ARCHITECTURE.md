@@ -132,22 +132,29 @@ del combate y del meta-juego. Nada de `GameEvents.button_pressed`.
 
 ```
 src/
-  autoloads/        AudioManager, CardDatabase, GameEvents, TurnSystem
+  autoloads/        AudioManager, AbilityDatabase, GameEvents
   combat/
     logic/          Estado puro, sin nodos (ver A-02)
+      events/       Subclases de Event
     view/           Nodos, animación, feedback
-    ai/             Decisión enemiga. Consume logic/, nunca view/
-  ui/               Menús, HUD, pantallas meta
-  meta/             Run, progresión, recompensas
+    ai/             Decisión del rival. Consume logic/, nunca view/
+  ui/               Menús, HUD, pantallas de loadout
+  meta/             Perfil, loadouts guardados, desbloqueos
 resources/
-  cards/            .tres de cartas
-  enemies/          .tres de arquetipos enemigos
-  encounters/       .tres de composiciones de encuentro
+  abilities/        .tres de habilidades
+  characters/       .tres de personajes (kit de ~15 habilidades)
+  arenas/           .tres de arenas: terreno y posiciones de salida
 assets/
   sprites/  audio/  fonts/
 test/               Tests GdUnit4, espejando src/combat/logic/
 docs/               Este documento, GDD, backlog
 ```
+
+> Los nombres de `resources/` cambiaron con el pivote de `GDD.md` v0.2: `cards/` →
+> `abilities/` (A-14, ya no hay mazo), `enemies/` → `characters/` (el rival es un
+> personaje con kit, no un arquetipo de IA) y `encounters/` → `arenas/` (no hay
+> encuentros encadenados, hay partidas sueltas). `TurnSystem` se eliminó al alinear
+> el repo con A-06; el turno lo lleva el `CombatState`.
 
 ---
 
