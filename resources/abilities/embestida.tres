@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Ability" format=3]
+
+[ext_resource type="Script" path="res://src/combat/logic/effect.gd" id="1_4co53"]
+[ext_resource type="Script" path="res://src/combat/logic/effects/damage_effect.gd" id="2_t2t87"]
+[ext_resource type="Script" path="res://src/combat/logic/effects/push_effect.gd" id="3_25fgx"]
+[ext_resource type="Script" path="res://src/combat/logic/ability.gd" id="4_akwqx"]
+
+[sub_resource type="Resource" id="Resource_at8p7"]
+script = ExtResource("2_t2t87")
+
+[sub_resource type="Resource" id="Resource_uujbf"]
+script = ExtResource("3_25fgx")
+distance = 2
+
+[resource]
+script = ExtResource("4_akwqx")
+id = &"embestida"
+display_name = "Embestida"
+description = "1 de daño a un adyacente y lo empuja 2 casillas."
+mana_cost = 2
+effects = Array[ExtResource("1_4co53")]([SubResource("Resource_at8p7"), SubResource("Resource_uujbf")])

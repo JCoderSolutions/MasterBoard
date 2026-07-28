@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Ability" format=3]
+
+[ext_resource type="Script" path="res://src/combat/logic/effect.gd" id="1_rurwm"]
+[ext_resource type="Script" path="res://src/combat/logic/effects/pull_effect.gd" id="2_ylx7j"]
+[ext_resource type="Script" path="res://src/combat/logic/ability.gd" id="3_ewta6"]
+
+[sub_resource type="Resource" id="Resource_qdrdr"]
+script = ExtResource("2_ylx7j")
+distance = 2
+
+[resource]
+script = ExtResource("3_ewta6")
+id = &"garfio"
+display_name = "Garfio"
+description = "Atrae 2 casillas a un rival en línea."
+mana_cost = 2
+max_range = 3
+requires_line_of_sight = true
+effects = Array[ExtResource("1_rurwm")]([SubResource("Resource_qdrdr")])

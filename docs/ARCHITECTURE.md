@@ -99,8 +99,17 @@ resources/abilities/
   bulwark.tres       # coste 2, target: casilla libre adyacente, efectos: [Barrier(1)]
 ```
 
-`AbilityDatabase` (el autoload que hoy se llama `CardDatabase`) carga y indexa estos recursos
-al arrancar.
+**No hay registro global.** A-04 pedía originalmente un autoload `AbilityDatabase` que
+cargara e indexara los recursos al arrancar; al implementarlo (backlog 1.8) resultó que no
+lo necesita nadie. Un autoload es un `Node`, así que `logic/` no puede tocarlo (A-02), y las
+habilidades no llegan al combate buscándolas por id: llegan dentro del personaje, porque
+cargar `guerrero.tres` arrastra su kit entero — Godot sigue las referencias entre recursos
+solo. El singleton habría sido un envoltorio de `load()` sobre una caché que `ResourceLoader`
+ya tiene.
+
+Si los replays o el PvP acaban necesitando resolver un id de habilidad a su recurso, se añade
+entonces, y como clase estática. `Ability.id` existe desde el principio precisamente para que
+esa puerta quede abierta.
 
 **Por qué:** el balance son cientos de iteraciones pequeñas. Si cada ajuste requiere tocar
 código y recompilar mentalmente el sistema, no vas a iterar lo suficiente y el juego quedará
@@ -132,10 +141,12 @@ del combate y del meta-juego. Nada de `GameEvents.button_pressed`.
 
 ```
 src/
-  autoloads/        AudioManager, AbilityDatabase, GameEvents
+  autoloads/        AudioManager, GameEvents
   combat/
     logic/          Estado puro, sin nodos (ver A-02)
       events/       Subclases de Event
+      commands/     Subclases de Command
+      effects/      Subclases de Effect (piezas de habilidad)
     view/           Nodos, animación, feedback
     ai/             Decisión del rival. Consume logic/, nunca view/
   ui/               Menús, HUD, pantallas de loadout

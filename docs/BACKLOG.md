@@ -76,8 +76,23 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
     posición perdedora, no un empuje desperdiciado.
   - `Damage.apply()` queda como único punto de paso del daño. Los escudos (1.11) se
     interceptan ahí, en un sitio, no en los cuatro que lo necesitan.
-- [ ] **1.8** `Ability` como recurso componible: `Damage`, `Push`, `Pull`, `MoveSelf`, `Barrier`, `Shield`, `Mana`
-  - Test: añadir una habilidad nueva no toca ningún `.gd` de lógica
+- [x] **1.8** `Ability` como recurso componible
+  - Efectos implementados: `Damage`, `Push`, `Pull`, `MoveSelf`. **`Barrier`, `Shield` y
+    `Mana` se quedan para 1.10, 1.11 y 1.12**, que es donde nace el estado del que
+    dependen (duración, absorción, economía). Un efecto no puede escribirse antes que
+    el estado que modifica.
+  - `Ability.apply()` comprueba el maná pero **no lo cobra**: se paga al comprometer la
+    elección, no al resolverla (1.9). Si cobrara aquí, esquivar devolvería el maná del
+    golpe fallado y desaparecería el castigo por leer mal.
+  - `CardDatabase` **eliminado**, no renombrado: era un `Node` que `logic/` no puede
+    tocar y que solo envolvía un `load()` ya cacheado. Las habilidades llegan dentro del
+    personaje. Ver A-04.
+  - Targeting tiene un modo `REACHABLE_TILE` que pregunta a `MoveCommand.validate()` en
+    vez de reimplementar "alineada, libre y despejada". Sin él la previsualización
+    ofrecería casillas que el movimiento rechaza.
+  - 5 habilidades en `resources/abilities/` generadas con el motor. `embestida` es la
+    prueba de la composición: `[Daño(1), Empuje(2)]` pega el doble contra el borde
+    porque se suma el impacto, y eso no está programado en ningún sitio.
 - [ ] **1.9** **`Round`: selección simultánea + resolución por fases (A-12)** ← la pieza central
   - Recoge una elección de movimiento y una de habilidad por bando
   - Resuelve: barreras → movimiento → ataques → terreno

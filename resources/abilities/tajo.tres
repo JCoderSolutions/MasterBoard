@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Ability" format=3]
+
+[ext_resource type="Script" path="res://src/combat/logic/effect.gd" id="1_2bxey"]
+[ext_resource type="Script" path="res://src/combat/logic/effects/damage_effect.gd" id="2_1fm1k"]
+[ext_resource type="Script" path="res://src/combat/logic/ability.gd" id="3_jll4c"]
+
+[sub_resource type="Resource" id="Resource_ggecr"]
+script = ExtResource("2_1fm1k")
+amount = 3
+
+[resource]
+script = ExtResource("3_jll4c")
+id = &"tajo"
+display_name = "Tajo"
+description = "3 de daño a un adyacente."
+mana_cost = 1
+effects = Array[ExtResource("1_2bxey")]([SubResource("Resource_ggecr")])

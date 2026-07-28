@@ -19,7 +19,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 AudioManager="*res://src/autoloads/audio_manager.gd"
-CardDatabase="*res://src/autoloads/card_database.gd"
 GameEvents="*res://src/autoloads/game_events.gd"
 
 [display]

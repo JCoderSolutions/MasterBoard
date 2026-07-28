@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Ability" format=3]
+
+[ext_resource type="Script" path="res://src/combat/logic/effect.gd" id="1_ljfq3"]
+[ext_resource type="Script" path="res://src/combat/logic/effects/damage_effect.gd" id="2_yumwl"]
+[ext_resource type="Script" path="res://src/combat/logic/ability.gd" id="3_e66lw"]
+
+[sub_resource type="Resource" id="Resource_2fhmi"]
+script = ExtResource("2_yumwl")
+amount = 2
+
+[resource]
+script = ExtResource("3_e66lw")
+id = &"disparo"
+display_name = "Disparo"
+description = "2 de daño en línea, hasta 3 casillas."
+mana_cost = 2
+max_range = 3
+requires_line_of_sight = true
+effects = Array[ExtResource("1_ljfq3")]([SubResource("Resource_2fhmi")])
