@@ -37,7 +37,10 @@ Si al terminarla no te apetece rejugar el encuentro, para y rediseña antes de s
 ### 1A — Núcleo lógico, sin gráficos (20-25h)
 
 - [x] **1.1** `CombatState`: grilla 5×5, unidades con posición/vida/equipo, energía, turno, RNG con semilla
-- [ ] **1.2** `Command` base con `validate()` / `apply()` y `Event` como resultado
+- [x] **1.2** `Command` base con `validate()` / `apply()` y `Event` como resultado
+  - Incluye `resolver.gd` (A-02) e historial de comandos, que es lo que habilita undo/replay.
+  - Eventos por ahora: `UnitMoved`, `UnitDamaged`, `UnitDied`. Los de carta, turno y fin de
+    combate llegan con sus comandos (1.6-1.9), no antes.
 - [ ] **1.3** Sistema de coordenadas y utilidades: adyacencia, distancia, línea, casilla ocupada
 - [ ] **1.4** `MoveCommand` + regla de caída: mover fuera de grilla mata la unidad
   - Test: empujar unidad en el borde hacia afuera → muerta, casilla liberada
