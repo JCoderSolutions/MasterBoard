@@ -179,8 +179,17 @@ abrir el editor, y el resultado es idéntico con la misma semilla y las mismas e
 
 ### 1B — IA que elige a ciegas (12-18h)
 
-- [ ] **1.15** **Test de honestidad primero** (A-15): la decisión de la IA nunca recibe el
+- [x] **1.15** **Test de honestidad primero** (A-15): la decisión de la IA nunca recibe el
   comando del jugador. Se escribe **antes** que la IA, no después
+  - `Ai.decide(state, unit_id)` existe ya, pero su cuerpo es un placeholder deliberado
+    ("no hacer nada"): la firma es lo que se protege en 1.15, la evaluación real la
+    construyen 1.16-1.19 **encima** de esta misma firma, sin tocarla.
+  - La garantía se congela con **reflexión**, no con disciplina: un test comprueba que
+    `decide()` tiene exactamente 2 argumentos y que ninguno es de tipo `RoundChoice`,
+    y otro comprueba que `CombatState` tampoco guarda un `RoundChoice` en un campo
+    propio — la puerta de atrás por la que se filtraría igual sin cambiar la firma.
+  - Sin esto, un cambio futuro que le pasara la elección del jugador "ya que la
+    tenemos ahí" compilaría sin avisar. Con esto, rompe un test con nombre explícito.
 - [ ] **1.16** Enumerar el espacio de acciones legales de una unidad dado su maná y kit
 - [ ] **1.17** Evaluación por valor esperado: clonar el estado, simular las acciones posibles
   del jugador, elegir la respuesta con mejor resultado promedio
