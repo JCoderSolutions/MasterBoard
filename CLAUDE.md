@@ -19,8 +19,13 @@ Dev solo. Diseño en `docs/GDD.md`, decisiones técnicas en `docs/ARCHITECTURE.m
 ```bash
 godot --path . --editor              # abrir editor
 godot --path . --headless --quit     # verificar que el proyecto carga
-godot --path . --headless -s addons/gdUnit4/bin/GdUnitCmdTool.gd -a test/   # tests
+godot --path . --headless -s res://addons/gdUnit4/bin/GdUnitCmdTool.gd --ignoreHeadlessMode -a test/   # tests
 ```
+
+`--ignoreHeadlessMode` no es opcional: gdUnit4 aborta en headless por defecto porque los
+`InputEvent` de Godot no se propagan sin ventana. Aquí da igual — `src/combat/logic/` es
+lógica pura sin UI. El día que haya tests de escena (Fase 1C), sí habrá que correrlos con
+ventana.
 
 **El binario no está en el PATH todavía.** Ruta en esta PC (ojo: al descomprimir se creó
 una carpeta que se llama igual que el `.exe`, de ahí el nombre repetido):

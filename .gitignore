@@ -13,6 +13,9 @@ builds/
 *.aab
 *.keystore
 
+# Reportes HTML/XML que genera gdUnit4 en cada corrida
+reports/
+
 # Basura del sistema y del editor
 .DS_Store
 Thumbs.db
