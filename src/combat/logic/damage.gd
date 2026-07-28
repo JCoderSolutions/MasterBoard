@@ -29,7 +29,20 @@ static func apply(unit: Unit, amount: int) -> Array[Event]:
 	if unit == null or not unit.is_alive() or amount <= 0:
 		return events
 
-	var applied := mini(amount, unit.hp)
+	# El escudo se come el golpe primero. Que este sea el único camino del daño es lo
+	# que hace que la absorción funcione igual venga de un ataque, del impacto de un
+	# empujón o de la lava, sin que ninguno de los tres sepa que existen los escudos.
+	var absorbed := unit.absorb(amount)
+	if absorbed > 0:
+		events.append(ShieldAbsorbed.new(unit.id, absorbed, unit.shield))
+		if not unit.has_shield():
+			events.append(ShieldExpired.new(unit.id))
+
+	var remaining := amount - absorbed
+	if remaining <= 0:
+		return events
+
+	var applied := mini(remaining, unit.hp)
 	unit.take_damage(applied)
 
 	events.append(UnitDamaged.new(unit.id, applied, unit.hp))

@@ -17,7 +17,10 @@ extends RefCounted
 ##   ronda, y que el daño se cobre una sola vez llegases como llegases.
 
 enum Type {
-	BARRIER,   ## Muros y bloqueos, antes de que nadie se mueva
+	## Compromisos defensivos, antes de que nadie se mueva: muros, bloqueos **y
+	## escudos** (GDD §6). Un escudo puesto aquí protege contra los ataques y el
+	## terreno de esta misma ronda, no solo de la siguiente.
+	BARRIER,
 	MOVEMENT,  ## Ambos bandos a la vez
 	ATTACK,    ## Desde las posiciones ya actualizadas
 	TERRAIN,   ## Peligros de la casilla donde acabaste. No lo elige nadie

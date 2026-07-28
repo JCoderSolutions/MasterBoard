@@ -127,7 +127,18 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
   - Las barreras no se pueden poner sobre `VOID`: son un muro, no un puente. Taparlo
     dejaría que una carta de coste 1 anulara el peligro más letal de la arena.
   - `muro` (coste 1, 1 ronda) y `bastion` (coste 3, 2 rondas) en `resources/abilities/`.
-- [ ] **1.11** Escudos que absorben y caducan
+- [x] **1.11** Escudos que absorben y caducan
+  - Se intercepta en `Damage.apply()`, el único punto de paso del daño desde 1.7: la
+    absorción funciona igual contra un ataque directo, el impacto de un empujón o la
+    lava, sin que ninguno de los tres sepa que existen los escudos.
+  - Un escudo nuevo **sustituye** al anterior, no se acumula. Apilar habría sido la
+    estrategia de acumulación sin resolución que el GDD ya descartó para la curación.
+  - Van en fase `BARRIER` junto con los muros: son el mismo tipo de jugada, un
+    compromiso defensivo antes de que nadie se mueva, y protegen ya contra los ataques
+    de la ronda en que se ponen.
+  - Caducan al final de la ronda, en el mismo reloj que las barreras. Un escudo que se
+    agota por absorción caduca aunque le quedaran rondas: a cero no es un escudo.
+  - `coraza` (coste 2, 4 de absorción, 2 rondas) en `resources/abilities/`.
 - [ ] **1.12** Economía de maná: coste, acumulación, tope, quema del maná rival
 - [ ] **1.13** Condiciones de fin: vida 0 = derrota; ambos a 0 la misma ronda = empate
 - [ ] **1.14** Derrumbe del tablero desde la ronda 8 (GDD §4)

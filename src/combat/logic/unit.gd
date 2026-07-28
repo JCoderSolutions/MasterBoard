@@ -24,6 +24,14 @@ var max_hp: int = 1
 var mana: int = 0
 var max_mana: int = 0
 
+## Escudo: absorbe daño y caduca (GDD §6). Público, como todo lo demás.
+##
+## Es la defensa que el MVP sí permite, frente a la curación que no: absorbe una
+## cantidad fija y se acaba, así que no puede convertir la partida en un desgaste sin
+## resolución. Dos jugadores que se escudan siguen avanzando hacia el final.
+var shield: int = 0
+var shield_rounds: int = 0
+
 
 func _init(
 	p_id: int = 0,
@@ -82,7 +90,49 @@ func burn_mana(amount: int) -> void:
 	mana = maxi(mana - amount, 0)
 
 
+# ── Escudo ──────────────────────────────────────────────────────
+
+func has_shield() -> bool:
+	return shield > 0
+
+
+## Un escudo nuevo **sustituye** al anterior, no se acumula.
+##
+## Una sola regla, legible de un vistazo en el HUD. Apilar convertiría escudarse en una
+## estrategia de acumulación —justo el desgaste sin resolución que el GDD quiere evitar—
+## y "se queda el mejor de los dos" obligaría a explicar dos números en pantalla.
+## Rebajarte el escudo por error no es una trampa: el tuyo y el suyo están a la vista.
+func grant_shield(amount: int, duration: int) -> void:
+	if amount <= 0 or duration <= 0:
+		return
+	shield = amount
+	shield_rounds = duration
+
+
+## Consume escudo y devuelve cuánto absorbió. Al agotarse caduca, aunque le quedaran
+## rondas: un escudo a cero no es un escudo.
+func absorb(amount: int) -> int:
+	var absorbed := mini(shield, maxi(amount, 0))
+	shield -= absorbed
+	if shield <= 0:
+		shield_rounds = 0
+	return absorbed
+
+
+## Descuenta una ronda. Devuelve `true` si caducó justo ahora.
+func tick_shield() -> bool:
+	if shield_rounds <= 0:
+		return false
+	shield_rounds -= 1
+	if shield_rounds > 0:
+		return false
+	shield = 0
+	return true
+
+
 func clone() -> Unit:
 	var copy := Unit.new(id, team, position, max_hp, max_mana, mana)
 	copy.hp = hp
+	copy.shield = shield
+	copy.shield_rounds = shield_rounds
 	return copy

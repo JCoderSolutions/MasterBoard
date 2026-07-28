@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="Ability" format=3]
+
+[ext_resource type="Script" path="res://src/combat/logic/effect.gd" id="1_nonn2"]
+[ext_resource type="Script" path="res://src/combat/logic/effects/shield_effect.gd" id="2_ee36f"]
+[ext_resource type="Script" path="res://src/combat/logic/ability.gd" id="3_urpd2"]
+
+[sub_resource type="Resource" id="Resource_mbbdq"]
+script = ExtResource("2_ee36f")
+amount = 4
+duration = 2
+
+[resource]
+script = ExtResource("3_urpd2")
+id = &"coraza"
+display_name = "Coraza"
+description = "Te otorga un escudo de 4 durante 2 rondas."
+mana_cost = 2
+phase = 0
+targeting = 0
+effects = Array[ExtResource("1_nonn2")]([SubResource("Resource_mbbdq")])

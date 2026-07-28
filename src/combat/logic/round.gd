@@ -41,6 +41,7 @@ static func resolve(state: CombatState, choices: Array[RoundChoice]) -> Array[Ev
 	events.append_array(_attack_phase(state, ordered))
 	events.append_array(_terrain_phase(state))
 	events.append_array(_expire_barriers(state))
+	events.append_array(_expire_shields(state))
 	return events
 
 
@@ -242,4 +243,15 @@ static func _expire_barriers(state: CombatState) -> Array[Event]:
 	var events: Array[Event] = []
 	for pos in state.tick_barriers():
 		events.append(BarrierExpired.new(pos))
+	return events
+
+
+## Los escudos caducan al final por el mismo reloj que las barreras. Se descuenta
+## después de la fase de terreno, así que un escudo de 1 ronda absorbe el golpe **y** la
+## lava de la ronda en que se puso, y se va justo al cerrarla — no antes.
+static func _expire_shields(state: CombatState) -> Array[Event]:
+	var events: Array[Event] = []
+	for unit in state.units:
+		if unit.tick_shield():
+			events.append(ShieldExpired.new(unit.id))
 	return events
