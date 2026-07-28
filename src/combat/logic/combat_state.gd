@@ -84,6 +84,25 @@ func is_lethal(pos: Vector2i) -> bool:
 	return Terrain.is_lethal(terrain_at(pos))
 
 
+## Bloqueada por `WALL`, y solo por `WALL`.
+##
+## Las unidades **no** bloquean. En un duelo hay dos unidades en el tablero: que se
+## tapen mutuamente convertiría cada disparo en una consulta de oclusión sin añadir
+## ninguna decisión interesante. `VOID` y `HAZARD` tampoco bloquean — se dispara por
+## encima de un abismo.
+##
+## Exige que las casillas estén alineadas (`Grid.is_aligned`), porque solo existen
+## líneas en las 8 direcciones. Las habilidades de área no preguntan por esto: eligen
+## una casilla objetivo —esa sí con línea de visión— y afectan a su entorno.
+func has_line_of_sight(from: Vector2i, to: Vector2i) -> bool:
+	if not Grid.is_aligned(from, to):
+		return false
+	for pos in Grid.line_between(from, to):
+		if terrain_at(pos) == Terrain.Type.WALL:
+			return false
+	return true
+
+
 func unit_at(pos: Vector2i) -> Unit:
 	for unit in units:
 		if unit.is_alive() and unit.position == pos:

@@ -56,8 +56,10 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
 - [x] **1.4** Capa de terreno (A-13): `FLOOR`, `WALL`, `VOID`, `HAZARD` por casilla
   - Fuera del tablero devuelve `WALL`, así ninguna consulta necesita caso especial
     para "me salí" y el tablero cerrado del GDD §4 sale gratis.
-- [ ] **1.5** Utilidades de coordenadas: adyacencia, distancia, línea, línea de visión
-  - La línea de visión la necesitan las barreras; sin ella, un muro no bloquea disparos
+- [x] **1.5** Utilidades de coordenadas: adyacencia, distancia, línea, línea de visión
+  - `Grid` es geometría pura; la línea de visión vive en `CombatState` porque depende
+    del terreno. Solo hay líneas en las 8 direcciones: una línea Bresenham arbitraria
+    no se puede prever mirando la pantalla, y una habilidad imprevisible está rota.
 - [ ] **1.6** `MoveCommand` + reglas de terreno
   - Test: entrar en `VOID` mata y libera la casilla; `WALL` bloquea; `HAZARD` daña
 - [ ] **1.7** Empuje y colisión
