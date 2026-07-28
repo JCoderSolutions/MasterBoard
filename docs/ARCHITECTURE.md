@@ -82,26 +82,34 @@ reproducirse idéntico en tu máquina. Y sin determinismo no hay multijugador po
 
 ---
 
-## A-04 — Cartas como recursos, no como código
+## A-04 — Habilidades como recursos, no como código
 
-**Decisión:** cada carta es un `Resource` (`.tres`) con datos: coste, tipo de targeting,
-lista de efectos. Los efectos son también recursos, componibles.
+> Escrita cuando el juego era un deckbuilder. La decisión sobrevive entera al pivote de
+> `GDD.md` v0.2; solo cambia el vocabulario: *carta* → *habilidad*, y desaparece `Draw`
+> porque ya no hay mazo (ver A-14).
+
+**Decisión:** cada habilidad es un `Resource` (`.tres`) con datos: coste de maná, tipo de
+targeting, lista de efectos. Los efectos son también recursos, componibles.
 
 ```
-resources/cards/
+resources/abilities/
   strike.tres        # coste 1, target: enemigo adyacente, efectos: [Damage(3)]
   shove.tres         # coste 1, target: enemigo adyacente, efectos: [Push(2)]
-  reposition.tres    # coste 0, target: casilla vacía en rango 2, efectos: [MoveSelf]
+  dash.tres          # coste 0, target: casilla libre en rango 2, efectos: [MoveSelf]
+  bulwark.tres       # coste 2, target: casilla libre adyacente, efectos: [Barrier(1)]
 ```
 
-`CardDatabase` (ya está en tus autoloads) carga y indexa estos recursos al arrancar.
+`AbilityDatabase` (el autoload que hoy se llama `CardDatabase`) carga y indexa estos recursos
+al arrancar.
 
-**Por qué:** el balance de un deckbuilder son cientos de iteraciones pequeñas. Si cada ajuste
-requiere tocar código y recompilar mentalmente el sistema, no vas a iterar lo suficiente y el
-juego quedará mal balanceado. Además, un archivo de datos es un diff limpio en git.
+**Por qué:** el balance son cientos de iteraciones pequeñas. Si cada ajuste requiere tocar
+código y recompilar mentalmente el sistema, no vas a iterar lo suficiente y el juego quedará
+mal balanceado. Además, un archivo de datos es un diff limpio en git.
 
 **Consecuencia:** el conjunto de "efectos" posibles debe diseñarse con cuidado desde el
-principio. Empieza con pocos y ortogonales: `Damage`, `Push`, `Pull`, `MoveSelf`, `Block`, `Draw`.
+principio. Empieza con pocos y ortogonales: `Damage`, `Push`, `Pull`, `MoveSelf`, `Barrier`,
+`Shield`, `Mana`. La duración de una barrera es un campo del recurso, no una regla global
+(`GDD.md` §6).
 
 ---
 
@@ -215,7 +223,86 @@ piezas clave que necesiten mejor terminado.
 Testear animaciones y UI en un proyecto solo es un mal uso de tu tiempo.
 
 **Casos que deben tener test desde el día 1:**
-- Empujar una unidad fuera de la grilla la mata
-- Una carta no se puede jugar sin energía suficiente
-- El estado tras N comandos es idéntico con la misma semilla
-- Un enemigo ejecuta exactamente la acción que telegrafió
+- Entrar en una casilla `VOID` mata la unidad
+- Una habilidad no se puede usar sin maná suficiente
+- El estado tras N rondas es idéntico con la misma semilla y las mismas elecciones
+- La IA nunca recibe la elección del jugador antes de decidir (ver A-15)
+
+---
+
+## A-12 — Resolución simultánea por fases
+
+**Contexto (2026-07-28):** el juego pasó a ser un duelo de selección simultánea (ver `GDD.md`
+v0.2). Ambos bandos eligen sin ver al otro, así que hace falta una regla de resolución. Las
+dos candidatas eran fases fijas o "un bando ejecuta entero y luego el otro".
+
+**Decisión:** fases fijas — barreras → movimiento → ataques → terreno.
+
+**Por qué no equipos alternos:** dan ventaja estructural al que resuelve primero. Sus
+unidades se mueven y matan antes de que el otro actúe, así que las acciones del segundo
+apuntan a posiciones que ya cambiaron. Alternar quién empieza cada ronda no lo arregla:
+convierte la paridad del número de ronda en un factor de victoria, que es ruido puro.
+
+Y hay un daño de diseño más profundo: lo valioso de la selección simultánea es que **ambos
+apostaron en las mismas condiciones**. Si uno resuelve primero, el otro apostó contra alguien
+que ya sabía que actuaría antes. La simetría *es* el producto.
+
+**El argumento a favor de los alternos era la legibilidad** —se siguen mucho mejor en una
+pantalla de 270×480— y hay que reconocerlo. Pero ya está resuelto por otra vía: la lógica
+resuelve simultáneo y **la presentación se reproduce en secuencia**. `Resolver` devuelve un
+`Array[Event]` ordenado y la cola de animación los reproduce uno a uno. Se obtiene la simetría
+de las fases con la legibilidad de los alternos.
+
+**Consecuencia:** un comando ya no se aplica suelto. La unidad de ejecución es la **ronda**:
+se recogen las elecciones de ambos bandos y se resuelven juntas. `Resolver.execute()` sigue
+sirviendo para aplicar un comando individual dentro de una fase.
+
+---
+
+## A-13 — Terreno como capa de datos, no como reglas especiales
+
+**Contexto:** la v0.1 del GDD tenía "salir de la grilla mata" como regla global. El diseño
+nuevo quiere tableros cerrados, tableros con vacío, y peligros interiores tipo lava.
+
+**Decisión:** cada casilla tiene un tipo — `FLOOR`, `WALL`, `VOID`, `HAZARD` — y es propiedad
+de la arena, no del juego.
+
+**Por qué:** las tres cosas que se querían son la misma cosa vista desde ángulos distintos. Un
+sistema de terreno las cubre las tres; tres reglas especiales interactuarían mal entre ellas
+(¿qué pasa si empujas hacia un borde que además tiene lava?). Además convierte "los bordes
+matan" en una decisión de diseño de encuentro, que es lo que da variedad sin código nuevo.
+
+**Consecuencia:** `CombatState.is_free()` deja de significar "dentro de la grilla y vacía" y
+pasa a consultar el terreno. Salir del tablero es intentar entrar en una casilla que no existe,
+y eso simplemente se bloquea.
+
+---
+
+## A-14 — Kit fijo, no mazo
+
+**Decisión:** cada personaje tiene ~15 habilidades siempre disponibles, limitadas solo por
+maná. El jugador elige 8 antes de la partida. **No hay robo de cartas.**
+
+**Por qué:** el robo aleatorio sobre selección oculta es azar apilado sobre azar. "No robé la
+respuesta" es aceptable en un roguelite single-player donde la run absorbe la varianza; en un
+duelo de lectura es la razón número uno por la que un jugador siente que perdió injustamente.
+
+**Consecuencia técnica:** `CombatState` pierde `deck`, `hand` y `discard`. La personalización
+se mueve a un `Loadout` que se resuelve **antes** de que empiece el combate, así que el estado
+de combate no la conoce: solo ve la lista de habilidades disponibles.
+
+---
+
+## A-15 — La IA elige a ciegas
+
+**Decisión:** la función de decisión de la IA recibe el `CombatState` y su propio kit, y
+**nunca** el comando que eligió el jugador esa ronda.
+
+**Por qué:** es la única diferencia entre un rival y un tramposo. Como ambos eligen a la vez,
+sería trivial —y tentador, por rendimiento— pasarle la elección del jugador "ya que la
+tenemos". El juego seguiría funcionando y se volvería injusto en silencio, que es la peor
+clase de bug: no crashea, solo hace que perder se sienta mal sin que nadie sepa por qué.
+
+**Cómo se protege:** con un test explícito sobre la firma y el flujo de decisión, no con
+disciplina. La IA sí puede clonar el estado y simular las acciones *posibles* del jugador
+—eso es leer, no hacer trampa— usando `CombatState.clone()` (A-02, punto 3).

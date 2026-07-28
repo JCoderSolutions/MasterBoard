@@ -58,9 +58,12 @@ func is_occupied(pos: Vector2i) -> bool:
 	return unit_at(pos) != null
 
 
-## Una casilla es transitable si está dentro de la grilla y libre. Salir de la
-## grilla no es "intransitable" sino letal (GDD, muerte por caída), así que esa
-## regla la aplica el comando de movimiento, no esta consulta.
+## Una casilla es transitable si está dentro del tablero y no la ocupa nadie.
+##
+## Pendiente de 1.4: esto tendrá que consultar la capa de terreno (A-13). Hoy el
+## tablero es uniforme, así que "dentro" alcanza; en cuanto existan `WALL`, `VOID`
+## y `HAZARD`, la letalidad la decide la casilla y no el borde. El borde del
+## tablero ya no mata por sí solo — eso era la regla global del GDD v0.1.
 func is_free(pos: Vector2i) -> bool:
 	return is_inside(pos) and not is_occupied(pos)
 
