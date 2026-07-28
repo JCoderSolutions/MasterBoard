@@ -21,10 +21,9 @@ Una tarea está *hecha* cuando pasa sus criterios de aceptación y está commite
     `--ignoreHeadlessMode`; el comando correcto está en `CLAUDE.md`.
 - [x] **0.5** Añadir `.mcp.json` y `.claude/settings.json` al repo (config que viaja entre PCs)
 - [x] **0.6** GitHub Action: correr tests en cada push a `main`
-  - `.github/workflows/tests.yml`. La URL de descarga sí está comprobada: el asset
-    `Godot_v4.7.1-stable_linux.x86_64.zip` existe y contiene un único archivo con ese
-    mismo nombre, que es lo que asume el `mv` del job. Lo que sigue sin probarse es el
-    job en sí (caché, versiones de las actions); la primera ejecución en GitHub lo dirá.
+  - `.github/workflows/tests.yml`. **Verificado en GitHub**: el primer run pasó en verde
+    (81 tests, commit `b3bbbaa`). Descarga de Godot, caché, `--import` y el CLI de
+    gdUnit4 funcionan tal cual estaban escritos.
 - [x] **0.7** Verificar `.gitignore` cubre `.godot/`, `.import/`, `export_presets.cfg`, `builds/`
 - [ ] **0.8** Importar el asset pack, verificar licencia (D-03), documentar atribución en `CREDITS.md`
   - Bloqueado: `assets/` solo tiene `.gitkeep`, el pack no está en el repo. Lo tienes que
