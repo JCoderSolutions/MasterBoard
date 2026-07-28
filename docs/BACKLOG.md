@@ -17,14 +17,14 @@ Una tarea está *hecha* cuando pasa sus criterios de aceptación y está commite
 - [x] **0.2** Crear estructura de carpetas de `ARCHITECTURE.md` A-06 con `.gitkeep`
 - [x] **0.3** Añadir `CLAUDE.md`, `docs/GDD.md`, `docs/ARCHITECTURE.md`, este backlog
 - [x] **0.4** Instalar GdUnit4 en `addons/`, verificar que corre en headless
-  - gdUnit4 **6.1.3**, instalado a mano desde el release de GitHub (esta máquina no tiene
-    salida de red desde la terminal, SSL error 35). Requiere `--ignoreHeadlessMode`; el
-    comando correcto está en `CLAUDE.md`.
+  - gdUnit4 **6.1.3**, instalado a mano desde el release de GitHub. Requiere
+    `--ignoreHeadlessMode`; el comando correcto está en `CLAUDE.md`.
 - [x] **0.5** Añadir `.mcp.json` y `.claude/settings.json` al repo (config que viaja entre PCs)
 - [x] **0.6** GitHub Action: correr tests en cada push a `main`
-  - `.github/workflows/tests.yml`. **Sin verificar**: esta máquina no tiene red, así que
-    no se ha podido comprobar ni la URL de descarga de Godot ni que el job pase. La
-    primera ejecución en GitHub es la prueba real.
+  - `.github/workflows/tests.yml`. La URL de descarga sí está comprobada: el asset
+    `Godot_v4.7.1-stable_linux.x86_64.zip` existe y contiene un único archivo con ese
+    mismo nombre, que es lo que asume el `mv` del job. Lo que sigue sin probarse es el
+    job en sí (caché, versiones de las actions); la primera ejecución en GitHub lo dirá.
 - [x] **0.7** Verificar `.gitignore` cubre `.godot/`, `.import/`, `export_presets.cfg`, `builds/`
 - [ ] **0.8** Importar el asset pack, verificar licencia (D-03), documentar atribución en `CREDITS.md`
   - Bloqueado: `assets/` solo tiene `.gitkeep`, el pack no está en el repo. Lo tienes que
