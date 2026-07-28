@@ -50,12 +50,12 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
   - Heredado. 9 tests en verde.
 - [x] **1.2** `Command` base con `validate()` / `apply()`, `Event` como resultado, `Resolver`
   - Heredado. 9 tests en verde. Sobrevive entero al pivote (A-12).
-- [ ] **1.3** Adaptar `CombatState` al diseño nuevo
-  - Quitar `deck` / `hand` / `discard` (A-14). Quitar `energy` global
-  - Añadir maná **por unidad**, público (GDD §4)
-  - Test: el maná se acumula y respeta el tope
-- [ ] **1.4** Capa de terreno (A-13): `FLOOR`, `WALL`, `VOID`, `HAZARD` por casilla
-  - Test: `is_free()` respeta el terreno; una arena cerrada no tiene ninguna casilla letal
+- [x] **1.3** Adaptar `CombatState` al diseño nuevo
+  - `turn` pasa a `round_number`: `round()` es función incorporada de GDScript y la
+    sombra silenciaría llamadas legítimas.
+- [x] **1.4** Capa de terreno (A-13): `FLOOR`, `WALL`, `VOID`, `HAZARD` por casilla
+  - Fuera del tablero devuelve `WALL`, así ninguna consulta necesita caso especial
+    para "me salí" y el tablero cerrado del GDD §4 sale gratis.
 - [ ] **1.5** Utilidades de coordenadas: adyacencia, distancia, línea, línea de visión
   - La línea de visión la necesitan las barreras; sin ella, un muro no bloquea disparos
 - [ ] **1.6** `MoveCommand` + reglas de terreno
