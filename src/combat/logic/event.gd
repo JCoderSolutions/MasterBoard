@@ -23,6 +23,7 @@ enum Type {
 	SHIELD_ABSORBED,
 	SHIELD_EXPIRED,
 	UNIT_MANA_CHANGED,
+	BOARD_COLLAPSED,
 }
 
 var type: Type

@@ -159,11 +159,23 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
     resolver. Mismo patrón que `Grid`/`Terrain`: preguntas, no reglas que mutan.
   - El test que demuestra que 1.9 ya lo dejó listo: dos `tajo` simultáneos que se
     matan entre sí producen `DRAW`, no un ganador por accidente de orden.
-- [ ] **1.14** Derrumbe del tablero desde la ronda 8 (GDD §4)
-  - Test: una unidad atrapada por el derrumbe muere
+- [x] **1.14** Derrumbe del tablero desde la ronda 8 (GDD §4)
+  - `BoardCollapse` tampoco vive dentro de `Round`: reacciona al **número de ronda**,
+    no a las elecciones de los bandos, y mezclar las tres cosas obligaría a leer las
+    otras dos para entender esta. Mismo patrón que `MatchResult` — quien orqueste las
+    rondas la llama junto a `begin_round()`.
+  - Un anillo por ronda desde la 8, de fuera hacia dentro. **El anillo más interior
+    nunca se derrumba**: un tablero es al menos esa casilla o deja de ser un tablero
+    de ajedrez y pasa a ser un cronómetro que mata a los dos.
+  - Idempotente a propósito: una casilla ya `VOID` no vuelve a contarse, así que
+    llamarlo más de una vez en la misma ronda no repite el evento ni mata dos veces.
+  - Los números exactos (ronda 8, un anillo por ronda) son una asunción de diseño, no
+    algo que diga el GDD literalmente más allá de "desde la ronda 8, por capas".
+    Pendiente de playtest, como el resto de números de combate (D-04, D-05).
 
-**Criterio de fase 1A:** puedes jugar una partida entera desde un test, sin abrir el editor,
-y el resultado es idéntico con la misma semilla y las mismas elecciones.
+**Criterio de fase 1A — cumplido.** Se puede jugar una partida entera desde un test, sin
+abrir el editor, y el resultado es idéntico con la misma semilla y las mismas elecciones
+(`round_test.gd::test_mismas_elecciones_mismo_resultado`). **Fase 1A cerrada.**
 
 ### 1B — IA que elige a ciegas (12-18h)
 
