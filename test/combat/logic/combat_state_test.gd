@@ -160,6 +160,49 @@ func test_quemar_mana_no_baja_de_cero() -> void:
 	assert_int(hero.mana).is_equal(0)
 
 
+# ── change_mana (backlog 1.12: familia Maná) ─────────────────────
+##
+## Lo que necesita ManaEffect: un delta con signo que devuelve lo que de verdad cambió,
+## ya recortado por el tope o por el suelo.
+
+func test_change_mana_positivo_restaura() -> void:
+	var state := CombatState.new()
+	var hero := state.add_unit(Unit.Team.PLAYER, Vector2i(2, 4))
+	hero.burn_mana(hero.mana)
+
+	var applied := hero.change_mana(3)
+
+	assert_int(applied).is_equal(3)
+	assert_int(hero.mana).is_equal(3)
+
+
+func test_change_mana_negativo_quema() -> void:
+	var state := CombatState.new()
+	var hero := state.add_unit(Unit.Team.PLAYER, Vector2i(2, 4))
+
+	var applied := hero.change_mana(-2)
+
+	assert_int(applied).is_equal(-2)
+	assert_int(hero.mana).is_equal(CombatState.MANA_START - 2)
+
+
+func test_change_mana_se_recorta_por_el_tope_y_el_suelo() -> void:
+	var state := CombatState.new()
+	var hero := state.add_unit(Unit.Team.PLAYER, Vector2i(2, 4))
+
+	assert_int(hero.change_mana(99)).is_equal(CombatState.MANA_MAX - CombatState.MANA_START)
+	assert_int(hero.change_mana(-99)).is_equal(-CombatState.MANA_MAX)
+
+
+func test_change_mana_de_cero_no_hace_nada() -> void:
+	var state := CombatState.new()
+	var hero := state.add_unit(Unit.Team.PLAYER, Vector2i(2, 4))
+	var mana_antes := hero.mana
+
+	assert_int(hero.change_mana(0)).is_equal(0)
+	assert_int(hero.mana).is_equal(mana_antes)
+
+
 func test_los_muertos_no_reciben_mana() -> void:
 	var state := CombatState.new()
 	var orc := state.add_unit(Unit.Team.ENEMY, Vector2i(0, 0))

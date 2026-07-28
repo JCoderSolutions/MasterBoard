@@ -90,6 +90,18 @@ func burn_mana(amount: int) -> void:
 	mana = maxi(mana - amount, 0)
 
 
+## Aplica un delta con signo y devuelve **lo que de verdad cambió**, ya recortado por el
+## tope o por el suelo de 0. Es lo que necesita `ManaEffect` para narrar: quien lanza
+## quiere un evento con el número real, no con el que pedía la carta.
+func change_mana(delta: int) -> int:
+	var before := mana
+	if delta > 0:
+		grant_mana(delta)
+	elif delta < 0:
+		burn_mana(-delta)
+	return mana - before
+
+
 # ── Escudo ──────────────────────────────────────────────────────
 
 func has_shield() -> bool:

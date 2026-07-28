@@ -22,6 +22,7 @@ enum Type {
 	UNIT_SHIELDED,
 	SHIELD_ABSORBED,
 	SHIELD_EXPIRED,
+	UNIT_MANA_CHANGED,
 }
 
 var type: Type

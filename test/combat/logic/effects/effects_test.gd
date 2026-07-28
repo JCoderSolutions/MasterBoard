@@ -116,3 +116,52 @@ func test_move_self_respeta_las_reglas_de_movimiento() -> void:
 
 	assert_array(MoveSelfEffect.new().apply(state, hero, Vector2i(3, 0))).is_empty()
 	assert_that(hero.position).is_equal(Vector2i(2, 2))
+
+
+# ── ManaEffect ──────────────────────────────────────────────────
+
+## Un signo, dos usos: positivo restaura, y como no distingue amigo de enemigo, apuntar
+## a tu propia casilla te restaura a ti.
+func test_mana_positivo_se_autolanza_por_targeting() -> void:
+	var state := _estado(Vector2i(2, 2), Vector2i(2, 1))
+	var hero := state.hero()
+	hero.burn_mana(hero.mana)
+	var effect := ManaEffect.new()
+	effect.amount = 3
+
+	var events := effect.apply(state, hero, hero.position)
+
+	assert_int(hero.mana).is_equal(3)
+	assert_array(events).has_size(1)
+	assert_int(events[0].type).is_equal(Event.Type.UNIT_MANA_CHANGED)
+
+
+func test_mana_negativo_quema_al_objetivo() -> void:
+	var state := _estado(Vector2i(2, 2), Vector2i(2, 1))
+	var rival := state.unit_at(Vector2i(2, 1))
+	var effect := ManaEffect.new()
+	effect.amount = -2
+
+	effect.apply(state, state.hero(), Vector2i(2, 1))
+
+	assert_int(rival.mana).is_equal(CombatState.MANA_START - 2)
+
+
+## Si el rival ya está seco, quemarle más no cambia nada, y no debe emitir un evento
+## de "-2" que la vista tendría que desmentir.
+func test_quemar_a_quien_ya_esta_seco_no_emite_nada() -> void:
+	var state := _estado(Vector2i(2, 2), Vector2i(2, 1))
+	var rival := state.unit_at(Vector2i(2, 1))
+	rival.burn_mana(rival.mana)
+	var effect := ManaEffect.new()
+	effect.amount = -2
+
+	assert_array(effect.apply(state, state.hero(), Vector2i(2, 1))).is_empty()
+
+
+func test_mana_a_una_casilla_vacia_no_hace_nada() -> void:
+	var state := _estado(Vector2i(2, 2), Vector2i(2, 1))
+	var effect := ManaEffect.new()
+	effect.amount = 2
+
+	assert_array(effect.apply(state, state.hero(), Vector2i(4, 4))).is_empty()

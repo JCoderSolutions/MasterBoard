@@ -139,7 +139,18 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
   - Caducan al final de la ronda, en el mismo reloj que las barreras. Un escudo que se
     agota por absorción caduca aunque le quedaran rondas: a cero no es un escudo.
   - `coraza` (coste 2, 4 de absorción, 2 rondas) en `resources/abilities/`.
-- [ ] **1.12** Economía de maná: coste, acumulación, tope, quema del maná rival
+- [x] **1.12** Economía de maná: coste, acumulación, tope, quema del maná rival
+  - Coste, acumulación y tope ya existían desde 1.1/1.3/1.9. Lo que faltaba era la
+    familia **Maná** del GDD §6 como habilidad jugable.
+  - `ManaEffect` es uno solo, con `amount` con signo: positivo restaura, negativo
+    quema. Igual que `DamageEffect`, no distingue amigo de enemigo — quién es el
+    objetivo lo decide el `targeting` del `.tres` (`SELF` para restaurar, `UNIT` para
+    quemar), no el efecto.
+  - `disipar` (quemar) va en fase `ATTACK` con línea de tiro, exactamente como
+    `disparo`: se esquiva moviéndose fuera de rango y se tapa con una barrera de la
+    fase 1. No es una regla nueva, es la misma que ya existía para el daño a distancia.
+  - `meditar` (restaurar, coste 1, +3) y `disipar` (quemar, coste 2, -3, alcance 2) en
+    `resources/abilities/`.
 - [ ] **1.13** Condiciones de fin: vida 0 = derrota; ambos a 0 la misma ronda = empate
 - [ ] **1.14** Derrumbe del tablero desde la ronda 8 (GDD §4)
   - Test: una unidad atrapada por el derrumbe muere

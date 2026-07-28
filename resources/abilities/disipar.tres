@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Ability" format=3]
+
+[ext_resource type="Script" path="res://src/combat/logic/effect.gd" id="1_38qad"]
+[ext_resource type="Script" path="res://src/combat/logic/effects/mana_effect.gd" id="2_240sm"]
+[ext_resource type="Script" path="res://src/combat/logic/ability.gd" id="3_a8wom"]
+
+[sub_resource type="Resource" id="Resource_wfo5d"]
+script = ExtResource("2_240sm")
+amount = -3
+
+[resource]
+script = ExtResource("3_a8wom")
+id = &"disipar"
+display_name = "Disipar"
+description = "Quema 3 de maná a un rival en línea, hasta 2 casillas."
+mana_cost = 2
+max_range = 2
+requires_line_of_sight = true
+effects = Array[ExtResource("1_38qad")]([SubResource("Resource_wfo5d")])
