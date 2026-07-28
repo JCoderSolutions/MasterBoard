@@ -65,8 +65,17 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
   - **`HAZARD` se movió a 1.9** (fase 4 de la ronda). Cobrarlo aquí lo duplicaría
     cuando un empujón mete a alguien en la lava: el daño de terreno tiene que
     aplicarse una sola vez, dé igual cómo llegaste a la casilla.
-- [ ] **1.7** Empuje y colisión
-  - Test: empujar contra un obstáculo detiene y hace 1 de daño; contra otra unidad daña a ambas
+- [x] **1.7** Empuje y colisión
+  - `Displacement.push()` no es un `Command`: el empuje nunca lo elige el jugador, es
+    consecuencia de una habilidad, y `validate()` no tendría nada que validar. Toma una
+    **dirección** en vez de un destino, así que el efecto `Pull` de 1.8 es la misma
+    llamada con la dirección invertida — sale gratis.
+  - El que bloquea recibe el daño pero **no se desplaza**: encadenar empujes haría
+    imposible previsualizar la jugada antes de confirmarla (R-07).
+  - Empujar a quien ya está pegado al muro duele igual. Acorralar tiene que ser una
+    posición perdedora, no un empuje desperdiciado.
+  - `Damage.apply()` queda como único punto de paso del daño. Los escudos (1.11) se
+    interceptan ahí, en un sitio, no en los cuatro que lo necesitan.
 - [ ] **1.8** `Ability` como recurso componible: `Damage`, `Push`, `Pull`, `MoveSelf`, `Barrier`, `Shield`, `Mana`
   - Test: añadir una habilidad nueva no toca ningún `.gd` de lógica
 - [ ] **1.9** **`Round`: selección simultánea + resolución por fases (A-12)** ← la pieza central
