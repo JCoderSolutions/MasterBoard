@@ -15,9 +15,10 @@ Objetivo: el repo queda listo para que cualquier sesión de trabajo empiece sin 
 - [x] **0.1** Alinear `project.godot`: `config/features` a 4.7, orientación portrait (D-01/A-09)
 - [x] **0.2** Crear estructura de carpetas de `ARCHITECTURE.md` A-06 con `.gitkeep`
 - [ ] **0.3** Añadir `CLAUDE.md`, `docs/GDD.md`, `docs/ARCHITECTURE.md`, este backlog
-- [ ] **0.4** Instalar GdUnit4 en `addons/`, verificar que corre en headless
-  - ⚠️ Bloqueado: esta máquina no tiene salida de red desde la terminal (SSL error 35).
-    Instalar desde el editor: pestaña **AssetLib** → buscar `gdUnit4` → Install.
+- [x] **0.4** Instalar GdUnit4 en `addons/`, verificar que corre en headless
+  - gdUnit4 **6.1.3**, instalado a mano desde el release de GitHub (esta máquina no tiene
+    salida de red desde la terminal, SSL error 35). Requiere `--ignoreHeadlessMode`; el
+    comando correcto está en `CLAUDE.md`.
 - [ ] **0.5** Añadir `.mcp.json` y `.claude/settings.json` al repo (config que viaja entre PCs)
 - [ ] **0.6** GitHub Action: correr tests en cada push a `main`
 - [x] **0.7** Verificar `.gitignore` cubre `.godot/`, `.import/`, `export_presets.cfg`, `builds/`
@@ -35,10 +36,7 @@ Si al terminarla no te apetece rejugar el encuentro, para y rediseña antes de s
 
 ### 1A — Núcleo lógico, sin gráficos (20-25h)
 
-- [ ] **1.1** `CombatState`: grilla 5×5, unidades con posición/vida/equipo, energía, turno, RNG con semilla
-  - Código escrito y verificado a mano (24 comprobaciones en headless, todas en verde).
-    Queda sin marcar porque `test/combat/logic/combat_state_test.gd` **nunca se ha
-    ejecutado**: depende de 0.4. No cuenta como hecho hasta que su test pase.
+- [x] **1.1** `CombatState`: grilla 5×5, unidades con posición/vida/equipo, energía, turno, RNG con semilla
 - [ ] **1.2** `Command` base con `validate()` / `apply()` y `Event` como resultado
 - [ ] **1.3** Sistema de coordenadas y utilidades: adyacencia, distancia, línea, casilla ocupada
 - [ ] **1.4** `MoveCommand` + regla de caída: mover fuera de grilla mata la unidad
