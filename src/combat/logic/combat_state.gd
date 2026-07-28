@@ -39,6 +39,12 @@ var rng_seed: int = 0
 ## veces cuando la IA simula, y duplicar un packed array es memcpy.
 var _terrain: PackedInt32Array = PackedInt32Array()
 
+## Barreras vivas: casilla -> rondas que le quedan (GDD §6). Se guardan aparte del
+## terreno en vez de pintarse encima porque el terreno es **dato de la arena** (A-13) y
+## una barrera es temporal: mezclarlas obligaría a recordar qué había debajo para
+## restaurarlo al caducar, y ese es exactamente el tipo de estado que se corrompe.
+var _barriers: Dictionary = {}
+
 var _next_unit_id: int = 1
 
 
@@ -61,8 +67,12 @@ func is_inside(pos: Vector2i) -> bool:
 ## El tablero es cerrado (GDD §4), así que el borde se comporta exactamente como un
 ## muro y ninguna consulta necesita un caso especial para "me salí". Las arenas que
 ## quieran bordes letales ponen `VOID` explícitamente en sus casillas.
+## Una barrera viva se comporta como `WALL` y punto: bloquea movimiento, empuje y línea
+## de tiro sin que ninguna de esas tres reglas tenga que saber que existe.
 func terrain_at(pos: Vector2i) -> Terrain.Type:
 	if not is_inside(pos):
+		return Terrain.Type.WALL
+	if _barriers.has(pos):
 		return Terrain.Type.WALL
 	return _terrain[pos.y * GRID_WIDTH + pos.x] as Terrain.Type
 
@@ -119,6 +129,48 @@ func is_occupied(pos: Vector2i) -> bool:
 ## además por `is_lethal()`.
 func is_free(pos: Vector2i) -> bool:
 	return is_walkable(pos) and not is_occupied(pos)
+
+
+# ── Barreras (GDD §6) ───────────────────────────────────────────
+
+func has_barrier(pos: Vector2i) -> bool:
+	return _barriers.has(pos)
+
+
+## Rondas que le quedan, 0 si no hay barrera.
+func barrier_duration(pos: Vector2i) -> int:
+	return _barriers.get(pos, 0)
+
+
+## Devuelve `false` si la casilla no admite barrera, y quien la coloca debe mirarlo.
+##
+## Solo sobre suelo transitable y vacío. **El vacío queda fuera**: una barrera es un muro,
+## no un puente, y taparlo dejaría que una carta barata anulara el peligro más letal de la
+## arena — que el rival te empuje al abismo.
+func place_barrier(pos: Vector2i, duration: int) -> bool:
+	if duration <= 0 or not is_inside(pos):
+		return false
+	if not is_free(pos) or is_lethal(pos) or has_barrier(pos):
+		return false
+	_barriers[pos] = duration
+	return true
+
+
+## Descuenta una ronda a cada barrera y devuelve las que caducaron.
+##
+## Se llama al final de la ronda, así que una barrera de duración 1 puesta en la fase 1
+## dura justo esa ronda: bloquea el movimiento y los tiros de la ronda en que la pusiste,
+## y desaparece. Es la apuesta pura de predicción del GDD §6.
+func tick_barriers() -> Array[Vector2i]:
+	var expired: Array[Vector2i] = []
+	for pos in _barriers.keys():
+		var remaining: int = _barriers[pos] - 1
+		if remaining <= 0:
+			expired.append(pos)
+			_barriers.erase(pos)
+		else:
+			_barriers[pos] = remaining
+	return expired
 
 
 # ── Unidades ────────────────────────────────────────────────────
@@ -181,6 +233,7 @@ func clone() -> CombatState:
 	copy.rng.state = rng.state
 	copy.round_number = round_number
 	copy._terrain = _terrain.duplicate()
+	copy._barriers = _barriers.duplicate()
 	copy._next_unit_id = _next_unit_id
 	for unit in units:
 		copy.units.append(unit.clone())

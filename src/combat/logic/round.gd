@@ -40,6 +40,7 @@ static func resolve(state: CombatState, choices: Array[RoundChoice]) -> Array[Ev
 	events.append_array(_movement_phase(state, ordered))
 	events.append_array(_attack_phase(state, ordered))
 	events.append_array(_terrain_phase(state))
+	events.append_array(_expire_barriers(state))
 	return events
 
 
@@ -136,6 +137,16 @@ static func _movement_phase(state: CombatState, choices: Array[RoundChoice]) -> 
 			pending.erase(choice)
 			progressed = true
 
+	# Lo que queda no puede completarse. Se resuelve igual, y el movimiento avanza lo
+	# que pueda (GDD §5): si una barrera te tapó el destino después de que lo eligieras,
+	# te detienes contra ella en vez de quedarte clavado.
+	#
+	# Los ciclos siguen bloqueados sin regla aparte: en un intercambio, cada uno tiene
+	# al otro en la casilla de al lado, así que "lo que pueda" son cero casillas.
+	for choice in pending:
+		var unit := state.unit_by_id(choice.unit_id)
+		events.append_array(choice.movement.resolve(state, unit, choice.movement_target))
+
 	return events
 
 
@@ -175,8 +186,32 @@ static func _attack_phase(state: CombatState, choices: Array[RoundChoice]) -> Ar
 
 	for choice in attackers:
 		var unit := state.unit_by_id(choice.unit_id)
+		if not _reaches(state, unit, choice.action, choice.action_target):
+			continue
 		events.append_array(choice.action.resolve(state, unit, choice.action_target))
 	return events
+
+
+## Lo único que se comprueba de nuevo al resolver un ataque: que **llegue**.
+##
+## Hay que distinguir dos cosas que parecen la misma. Si el rival se movió, el golpe sale
+## igual y da en el aire: eso es esquivar, y no se comprueba nada. Pero si algo se
+## interpuso en la trayectoria —una barrera de la fase 1— el disparo no llega, y
+## bloquearlo es precisamente lo que se pagó al levantar el muro (GDD §6).
+##
+## Se mide desde la posición **actual** de quien dispara, no desde la que tenía al
+## elegir. Moverse y disparar hay que planearlos juntos: si tu propio movimiento te deja
+## sin línea, te quedas sin tiro. Es información que el jugador tiene entera antes de
+## confirmar, así que es una decisión, no una trampa.
+static func _reaches(
+	state: CombatState,
+	caster: Unit,
+	ability: Ability,
+	target: Vector2i,
+) -> bool:
+	if not ability.requires_line_of_sight:
+		return true
+	return state.has_line_of_sight(caster.position, target)
 
 
 # ── Fase 4: terreno ─────────────────────────────────────────────
@@ -193,4 +228,18 @@ static func _terrain_phase(state: CombatState) -> Array[Event]:
 			continue
 		if state.terrain_at(unit.position) == Terrain.Type.HAZARD:
 			events.append_array(Damage.apply(unit, Terrain.HAZARD_DAMAGE))
+	return events
+
+
+# ── Cierre de ronda ─────────────────────────────────────────────
+
+## Las barreras caducan al final, no en una fase.
+##
+## No es una fase porque nadie lo elige y nada puede reaccionar a ello: es el reloj de la
+## ronda corriendo. Ponerlo antes del terreno dejaría caer un muro justo a tiempo de que
+## alguien se comiera la lava que tapaba, y eso no lo decidió ninguno de los dos.
+static func _expire_barriers(state: CombatState) -> Array[Event]:
+	var events: Array[Event] = []
+	for pos in state.tick_barriers():
+		events.append(BarrierExpired.new(pos))
 	return events

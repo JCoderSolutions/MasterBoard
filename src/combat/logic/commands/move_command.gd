@@ -39,29 +39,47 @@ func validate(state: CombatState) -> bool:
 	return true
 
 
-## Recorre el camino casilla a casilla en vez de saltar al destino, porque el vacío
-## puede interrumpirlo a mitad: si dashas cruzando un abismo, te caes en el abismo,
-## no llegas al otro lado. `validate()` no lo impide —el movimiento es legal— y es
-## `apply()` quien cuenta la verdad. La previsualización de targeting (1.26) muestra
-## ese resultado real, así que el jugador nunca cae ahí por sorpresa.
+## Recorre el camino casilla a casilla en vez de saltar al destino, y avanza **lo que
+## pueda**: se detiene contra el primer obstáculo y se cae si el camino cruza un abismo.
+##
+## Esa división es deliberada. `validate()` responde "¿puedo elegir esto?" y la usan el
+## targeting y la previsualización (1.26). `apply()` responde "¿qué pasa de verdad?", y
+## tiene que poder contar algo distinto porque **entre elegir y resolver el tablero
+## cambia**: las barreras se levantan en la fase 1 y el movimiento es la 2, así que tu
+## destino puede quedar tapado después de haberlo confirmado. Ahí el GDD §5 no te deja
+## clavado, te deja detenido contra el muro.
+##
+## A diferencia de `Displacement`, chocar aquí **no hace daño**: caminar contra una pared
+## por decisión propia no es lo mismo que que te estrellen contra ella.
 func apply(state: CombatState) -> Array[Event]:
+	var events: Array[Event] = []
+
 	var unit := state.unit_by_id(unit_id)
+	if unit == null or not unit.is_alive():
+		return events
+
 	var origin := unit.position
 	var step := Grid.direction(origin, destination)
+	if step == Vector2i.ZERO:
+		return events
 
 	var current := origin
 	while current != destination:
-		current += step
+		var next := current + step
+		if not state.is_free(next):
+			break
+
+		current = next
 		if state.is_lethal(current):
 			unit.position = current
 			unit.kill()
-			var fatal: Array[Event] = []
-			fatal.append(UnitMoved.new(unit_id, origin, current))
-			fatal.append(UnitDied.new(unit_id, UnitDied.Cause.FALL))
-			return fatal
+			events.append(UnitMoved.new(unit_id, origin, current))
+			events.append(UnitDied.new(unit_id, UnitDied.Cause.FALL))
+			return events
 
-	unit.position = destination
+	if current == origin:
+		return events
 
-	var events: Array[Event] = []
-	events.append(UnitMoved.new(unit_id, origin, destination))
+	unit.position = current
+	events.append(UnitMoved.new(unit_id, origin, current))
 	return events

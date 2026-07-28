@@ -17,6 +17,8 @@ enum Type {
 	UNIT_DAMAGED,
 	UNIT_DIED,
 	PHASE_STARTED,
+	BARRIER_PLACED,
+	BARRIER_EXPIRED,
 }
 
 var type: Type

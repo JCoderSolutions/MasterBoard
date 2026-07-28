@@ -111,8 +111,22 @@ conoce el kit del rival gana más que quien no. Si eso no pasa, el juego es azar
   - **Pendiente para 1.10:** GDD §5 dice que un movimiento bloqueado por una barrera
     "se detiene contra ella"; hoy se cancela entero, porque `MoveCommand` no hace
     movimiento parcial. Se resuelve cuando existan las barreras.
-- [ ] **1.10** Barreras con duración por carta, no global
-  - Test: una barrera de 1 ronda desaparece al final de la ronda en que se puso
+- [x] **1.10** Barreras con duración por carta, no global
+  - Viven en un diccionario aparte del terreno, no pintadas encima: el terreno es dato
+    de la arena (A-13) y una barrera es temporal. Mezclarlos obligaría a recordar qué
+    había debajo para restaurarlo al caducar.
+  - `terrain_at()` devuelve `WALL` donde hay barrera, así que bloquear movimiento,
+    empuje y línea de tiro sale gratis: ninguna de esas tres reglas sabe que existen.
+  - **Cierra el pendiente de 1.9**: `MoveCommand.apply()` ahora avanza lo que puede en
+    vez de cancelar. `validate()` responde "¿puedo elegir esto?" y `apply()` "¿qué pasa
+    de verdad?", y tienen que poder diferir porque entre elegir y resolver se levantan
+    barreras.
+  - La fase de ataques comprueba **una** cosa de nuevo: que el disparo llegue. Que el
+    rival se moviera no cancela el golpe (eso es esquivar), pero una barrera en la
+    trayectoria sí lo tapa — es lo que se pagó al levantarla.
+  - Las barreras no se pueden poner sobre `VOID`: son un muro, no un puente. Taparlo
+    dejaría que una carta de coste 1 anulara el peligro más letal de la arena.
+  - `muro` (coste 1, 1 ronda) y `bastion` (coste 3, 2 rondas) en `resources/abilities/`.
 - [ ] **1.11** Escudos que absorben y caducan
 - [ ] **1.12** Economía de maná: coste, acumulación, tope, quema del maná rival
 - [ ] **1.13** Condiciones de fin: vida 0 = derrota; ambos a 0 la misma ronda = empate

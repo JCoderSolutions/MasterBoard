@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Ability" format=3]
+
+[ext_resource type="Script" path="res://src/combat/logic/effect.gd" id="1_68ce1"]
+[ext_resource type="Script" path="res://src/combat/logic/effects/barrier_effect.gd" id="2_3uqnm"]
+[ext_resource type="Script" path="res://src/combat/logic/ability.gd" id="3_sl7ex"]
+
+[sub_resource type="Resource" id="Resource_0jueu"]
+script = ExtResource("2_3uqnm")
+
+[resource]
+script = ExtResource("3_sl7ex")
+id = &"muro"
+display_name = "Muro"
+description = "Levanta una barrera 1 ronda a distancia 2."
+mana_cost = 1
+phase = 0
+targeting = 2
+max_range = 2
+effects = Array[ExtResource("1_68ce1")]([SubResource("Resource_0jueu")])
