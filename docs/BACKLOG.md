@@ -223,8 +223,27 @@ abrir el editor, y el resultado es idéntico con la misma semilla y las mismas e
     solo usa diferencia de vida. 1.18 amplía esa rama sin tocar el resto.
   - `Unit.opposing_team()` nuevo: el único bando enemigo de un equipo es un hecho sobre
     el enum, no una regla de combate.
-- [ ] **1.18** Función de evaluación del tablero: vida, maná, proximidad a peligro, casillas
+- [x] **1.18** Función de evaluación del tablero: vida, maná, proximidad a peligro, casillas
   seguras disponibles
+  - Amplía `BoardEvaluation` **dentro** de la rama "sigue la partida" que 1.17 dejó
+    marcada, sin tocar la firma ni la rama de ganar/perder/empatar (`MatchResult`).
+  - Cada señal del bando contrario se **agrega una vez** (suma total de vida, de
+    maná, etc.) y se compara contra la propia una sola vez — no por cada rival por
+    separado. Fuera del alcance del MVP 1v1, pero sumar por rival habría duplicado el
+    propio valor en cuanto hubiera más de un rival enfrente (post-MVP, 2v2); un test
+    fija justo esa diferencia entre las dos fórmulas.
+  - Peligro: 1 punto por estar parado sobre `HAZARD` (volverá a doler la ronda que
+    viene si nadie se mueve) + 0.25 por cada vecino `VOID`/`HAZARD` (el rival podría
+    empujar hacia ahí). Una unidad viva nunca está sobre `VOID`: entrar ahí mata en el
+    acto, así que ese caso no hace falta comprobarlo.
+  - Escape: cuántas de las 8 casillas alrededor son transitables, libres y sin
+    peligro. Pocas casillas seguras es estar acorralado, aunque nadie te haya tocado
+    todavía — y por eso un muro vecino penaliza igual que uno letal, sin que eso
+    cuente además como "peligro" (`WALL` no es letal).
+  - Los pesos relativos (`MANA_WEIGHT`, `HAZARD_WEIGHT`, `SAFE_TILES_WEIGHT`) son una
+    asunción de diseño, pendiente de playtest, igual que los números de maná y vida
+    (D-04, D-05). La vida pesa 1 porque es la moneda real de la partida; el resto solo
+    importa porque acaba convirtiéndose en vida más adelante.
 - [ ] **1.19** Niveles de dificultad como profundidad de simulación, no como stats inflados
   - La dificultad viene de que la IA lea mejor, no de que pegue más fuerte
 
