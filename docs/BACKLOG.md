@@ -244,8 +244,29 @@ abrir el editor, y el resultado es idéntico con la misma semilla y las mismas e
     asunción de diseño, pendiente de playtest, igual que los números de maná y vida
     (D-04, D-05). La vida pesa 1 porque es la moneda real de la partida; el resto solo
     importa porque acaba convirtiéndose en vida más adelante.
-- [ ] **1.19** Niveles de dificultad como profundidad de simulación, no como stats inflados
-  - La dificultad viene de que la IA lea mejor, no de que pegue más fuerte
+- [x] **1.19** Niveles de dificultad como profundidad de simulación, no como stats inflados
+  - `Unit.search_depth` (por defecto 1) es el único dial. Está documentado como
+    contrato: si algún día "difícil" empieza a significar más vida o más daño, A-15
+    se rompe por otra puerta — ya no haría falta leer bien si al bicho le sobra vida.
+  - `ExpectedValueSearch` pasó de recibir listas de jugadas ya calculadas a recibir
+    los kits directamente: a partir de profundidad 2 las jugadas de la ronda
+    siguiente no existen todavía, dependen de un estado que solo aparece después de
+    resolver la anterior. `Ai.decide()` no lo nota — sigue con la firma de 1.15.
+  - **Entre una ronda simulada y la siguiente se llama a `begin_round()` de verdad**,
+    con su reparto de maná. Sin esto, mirar más hondo penalizaría sistemáticamente
+    ahorrar maná esta ronda para algo grande la próxima — justo la lectura que el
+    GDD quiere premiar (§4: "lleva tres rondas sin gastar, tiene algo grande listo").
+  - Sigue siendo promedio en cada nivel de la profundidad, no solo en el primero: el
+    rival decide a ciegas tanto dos rondas por delante como en la que se está jugando.
+  - Coste real, no solo teórico: profundidad 1 con un kit de 2 jugadas por bando
+    evalúa 4 hojas; profundidad 2 vuelve a abrir el árbol en cada una de esas 4, así
+    que evalúa 16. Es el techo de rendimiento que limita cuánto puede crecer este
+    dial en un teléfono de gama media (A-07).
+
+**Criterio de fase 1B — cumplido.** La IA elige sin recibir nunca la elección del
+jugador (test de reflexión, 1.15), lee el espacio de jugadas legales de las dos unidades
+(1.16), evalúa por valor esperado sobre vida/maná/peligro/escape (1.17-1.18), y la
+dificultad es cuánto profundiza, no cuánto pega (1.19). **Fase 1B cerrada.**
 
 ### 1C — Capa visual (25-35h)
 

@@ -14,13 +14,12 @@ extends RefCounted
 ## perder se sienta mal sin que nadie sepa por qué. `test/combat/ai/ai_honesty_test.gd`
 ## congela esta firma con reflexión para que ese cambio no pueda colarse callado.
 ##
-## El cuerpo de aquí ya piensa de verdad (1.16-1.17): enumera el espacio de jugadas
-## legales de las dos unidades con `ActionSpace` —el suyo para actuar, el del rival
-## para simular sus respuestas posibles, público por GDD §3/R-04 y explícitamente
-## permitido por A-15— y elige con `ExpectedValueSearch` la que mejor promedio da con
-## `BoardEvaluation` de por medio. `BoardEvaluation` sigue siendo un placeholder
-## (1.18 le falta maná, peligro y casillas seguras) y la profundidad de 1.19 todavía no
-## existe, pero ninguna de las dos cosas toca esta firma cuando lleguen.
+## El cuerpo de aquí ya piensa de verdad (1.16-1.19): usa `ExpectedValueSearch` con
+## `BoardEvaluation` para elegir la jugada de mejor promedio contra las respuestas
+## posibles del rival —público por GDD §3/R-04 y explícitamente permitido por A-15—,
+## mirando `unit.search_depth` rondas hacia delante. La dificultad vive ahí y solo
+## ahí: cambiar cuánto lee la IA no toca ni un campo de combate de `Unit` (A-15,
+## `Unit.search_depth`).
 ##
 ## Si no hay rival vivo al que responder, no hay nada que optimizar: se queda quieto.
 ## En el MVP 1v1 solo puede haber uno; el día que exista 2v2, sumar sus jugadas es
@@ -35,9 +34,7 @@ static func decide(state: CombatState, unit_id: int) -> RoundChoice:
 		return RoundChoice.new(unit_id)
 	var opponent := opponents[0]
 
-	var own_choices := ActionSpace.legal_choices(state, unit, unit.kit)
-	var opponent_choices := ActionSpace.legal_choices(state, opponent, opponent.kit)
-
 	return ExpectedValueSearch.best_choice(
-		state, unit_id, own_choices, opponent.id, opponent_choices, BoardEvaluation.score
+		state, unit_id, unit.kit, opponent.id, opponent.kit, BoardEvaluation.score,
+		unit.search_depth,
 	)

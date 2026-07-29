@@ -26,6 +26,14 @@ var max_hp: int = 1
 ## para simular sus respuestas posibles, que A-15 permite explícitamente.
 var kit: Array[Ability] = []
 
+## Cuántas rondas hacia delante mira la IA antes de decidir (backlog 1.19). Es el
+## **único** dial de dificultad: la IA tiene que leer mejor, no pegar más fuerte.
+## Ningún otro campo de esta clase debería depender de esto — el día que "difícil"
+## empiece a significar "más hp" o "más daño", A-15 se rompe por otra puerta: ya no
+## haría falta hacer trampa con la elección del jugador si total al bicho le sobra
+## vida para no necesitar leer bien.
+var search_depth: int = 1
+
 ## El tope es por unidad y no una constante global para que los personajes puedan
 ## diferenciarse por economía de maná, no solo por habilidades (A-14).
 var mana: int = 0
@@ -164,4 +172,5 @@ func clone() -> Unit:
 	# El kit no se duplica: las Ability son Resource inmutables compartidas, igual que
 	# nadie clona los .tres de terreno. Clonarlas sería copiar datos que nunca cambian.
 	copy.kit = kit
+	copy.search_depth = search_depth
 	return copy
