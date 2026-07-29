@@ -270,7 +270,22 @@ dificultad es cuánto profundiza, no cuánto pega (1.19). **Fase 1B cerrada.**
 
 ### 1C — Capa visual (25-35h)
 
-- [ ] **1.20** TileMap del tablero con los cuatro tipos de terreno + conversión lógica ↔ pixel
+- [x] **1.20** TileMap del tablero con los cuatro tipos de terreno + conversión lógica ↔ pixel
+  - **Primera tarea que abre el editor de verdad.** `src/combat/view/` empieza a
+    poblarse: `BoardView` (`TileMapLayer`) y `BoardCoordinates` (conversión pura,
+    sin nodo, testeable igual que `Grid`).
+  - `board_tileset.tres` es **arte de relleno a propósito**: cuatro cuadrados de
+    color con la textura incrustada en el propio recurso, porque un `.png` recién
+    escrito en `res://` no tiene `.import` todavía dentro de la misma ejecución del
+    script que lo generó. 0.8 sigue bloqueada; cuando el pack llegue, se sustituye
+    solo la textura del `TileSet` — ni `BoardView` ni el orden de los tiles cambian.
+  - El orden de los tiles del atlas coincide con `Terrain.Type` (FLOOR=0, WALL=1,
+    VOID=2, HAZARD=3) a propósito: pintar un terreno es usar el valor del enum como
+    columna del atlas, sin una tabla de traducción aparte que se pueda desincronizar.
+  - `BoardCoordinates.CELL_SIZE` tiene que coincidir a mano con el `tile_size` del
+    `.tres`, porque un recurso no puede leer una constante de GDScript. Documentado
+    como el único sitio donde revisar si algún día las unidades no calzan sobre su
+    casilla.
 - [ ] **1.21** Escena de unidad: sprite del asset pack, idle/walk/attack/hurt/death
 - [ ] **1.22** Puente `GameEvents`: suscribir la vista a los eventos del resolver
   - Es el único sitio donde lógica y nodos se tocan. Vive **fuera** de `logic/`
