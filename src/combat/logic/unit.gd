@@ -19,6 +19,13 @@ var position: Vector2i = Vector2i.ZERO
 var hp: int = 1
 var max_hp: int = 1
 
+## El kit disponible es tan público como la vida o el maná (GDD §3, R-04): saber qué
+## puede hacer el rival es el motor de deducción del juego. Vive aquí y no en un
+## `Character`/`Loadout` aparte porque eso todavía no existe (Fase 1D) y la IA (1.17)
+## ya necesita leer el kit de las dos unidades — el suyo para actuar, el del rival
+## para simular sus respuestas posibles, que A-15 permite explícitamente.
+var kit: Array[Ability] = []
+
 ## El tope es por unidad y no una constante global para que los personajes puedan
 ## diferenciarse por economía de maná, no solo por habilidades (A-14).
 var mana: int = 0
@@ -31,6 +38,13 @@ var max_mana: int = 0
 ## resolución. Dos jugadores que se escudan siguen avanzando hacia el final.
 var shield: int = 0
 var shield_rounds: int = 0
+
+
+## El único bando enemigo de `team`. Vive aquí y no en `Round`/`Ai` porque es un hecho
+## sobre el enum, no una regla de combate — cualquiera que necesite "el otro bando" lo
+## pregunta aquí en vez de escribir su propio `if`.
+static func opposing_team(team: Team) -> Team:
+	return Team.ENEMY if team == Team.PLAYER else Team.PLAYER
 
 
 func _init(
@@ -147,4 +161,7 @@ func clone() -> Unit:
 	copy.hp = hp
 	copy.shield = shield
 	copy.shield_rounds = shield_rounds
+	# El kit no se duplica: las Ability son Resource inmutables compartidas, igual que
+	# nadie clona los .tres de terreno. Clonarlas sería copiar datos que nunca cambian.
+	copy.kit = kit
 	return copy

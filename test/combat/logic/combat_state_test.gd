@@ -203,6 +203,27 @@ func test_change_mana_de_cero_no_hace_nada() -> void:
 	assert_int(hero.mana).is_equal(mana_antes)
 
 
+# ── Bando contrario y kit (backlog 1.17: la IA necesita las dos) ─
+
+func test_opposing_team() -> void:
+	assert_int(Unit.opposing_team(Unit.Team.PLAYER)).is_equal(Unit.Team.ENEMY)
+	assert_int(Unit.opposing_team(Unit.Team.ENEMY)).is_equal(Unit.Team.PLAYER)
+
+
+## El kit es tan público como la vida o el maná (GDD §3, R-04): la IA necesita leerlo
+## del rival tanto como del suyo, sin que eso cuente como la elección oculta que A-15
+## protege — es "qué puede hacer", no "qué va a hacer esta ronda".
+func test_el_clon_se_lleva_el_kit_sin_copiarlo() -> void:
+	var state := CombatState.new()
+	var hero := state.add_unit(Unit.Team.PLAYER, Vector2i(2, 4))
+	var tajo: Ability = load("res://resources/abilities/tajo.tres")
+	hero.kit = [tajo]
+
+	var copy := hero.clone()
+
+	assert_array(copy.kit).contains_exactly([tajo])
+
+
 func test_los_muertos_no_reciben_mana() -> void:
 	var state := CombatState.new()
 	var orc := state.add_unit(Unit.Team.ENEMY, Vector2i(0, 0))

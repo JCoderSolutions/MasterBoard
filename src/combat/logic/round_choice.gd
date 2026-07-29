@@ -51,3 +51,16 @@ func total_cost() -> int:
 
 func is_empty() -> bool:
 	return movement == null and action == null
+
+
+## `Round.resolve()` muta la elección que recibe —`_charge()` anula la ranura que no se
+## pudo pagar—, así que quien reutilice la misma instancia contra varios estados
+## distintos (la IA simulando, backlog 1.17) necesita una copia por resolución, o el
+## efecto de una simulación se filtraría en la siguiente.
+func clone() -> RoundChoice:
+	var copy := RoundChoice.new(unit_id)
+	copy.movement = movement
+	copy.movement_target = movement_target
+	copy.action = action
+	copy.action_target = action_target
+	return copy

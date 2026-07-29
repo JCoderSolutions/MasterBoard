@@ -205,8 +205,24 @@ abrir el editor, y el resultado es idéntico con la misma semilla y las mismas e
   - Objetivo válido: `UNIT` no distingue amigo de enemigo (ya lo documentaba
     `DamageEffect` desde 1.8), así que una habilidad de golpe siempre puede apuntarse a
     uno mismo. No es un bug de la enumeración, es la regla ya existente.
-- [ ] **1.17** Evaluación por valor esperado: clonar el estado, simular las acciones posibles
+- [x] **1.17** Evaluación por valor esperado: clonar el estado, simular las acciones posibles
   del jugador, elegir la respuesta con mejor resultado promedio
+  - **Es promedio, no minimax**, a propósito: un rival que también decide a ciegas no
+    puede jugar "y si hace lo peor para mí en concreto", porque tampoco sabe qué
+    elegiste tú. Minimax asumiría un rival que ya conoce tu jugada — la ventaja
+    injusta que A-15 existe para prohibir.
+  - `Ai.decide()` sigue con la firma congelada en 1.15 (`state, unit_id`, nada más).
+    Necesitaba leer el kit de las dos unidades sin romperla, así que el kit pasó a
+    vivir en `Unit` (`var kit: Array[Ability]`): es tan público como la vida o el maná
+    (GDD §3/R-04), no la elección oculta que A-15 protege.
+  - `RoundChoice.clone()` nuevo: `Round.resolve()` anula la ranura que no se pudo
+    pagar, así que reutilizar la misma instancia contra distintos clones filtraría el
+    resultado de una simulación en la siguiente.
+  - `BoardEvaluation.score()` es un **placeholder deliberado**: ganar/perder/empatar ya
+    son definitivos (se apoya en `MatchResult`, 1.13), pero en una ronda no decisiva
+    solo usa diferencia de vida. 1.18 amplía esa rama sin tocar el resto.
+  - `Unit.opposing_team()` nuevo: el único bando enemigo de un equipo es un hecho sobre
+    el enum, no una regla de combate.
 - [ ] **1.18** Función de evaluación del tablero: vida, maná, proximidad a peligro, casillas
   seguras disponibles
 - [ ] **1.19** Niveles de dificultad como profundidad de simulación, no como stats inflados
