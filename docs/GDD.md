@@ -239,7 +239,7 @@ El #3 es el goal que de verdad importa. Los demás son higiene.
 
 | # | Pregunta | Estado |
 |---|---|---|
-| D-01 | Orientación | ✅ Resuelto: portrait 270×480. Ver `ARCHITECTURE.md` A-09 |
+| D-01 | Orientación | ✅ Resuelto: landscape 480×270. Reabierta el 2026-07-28 tras el pivote a duelo — ya no hay mano de cartas que sostener, y el usuario quiere jugar con el teléfono en horizontal. Ver `ARCHITECTURE.md` A-09 |
 | D-02 | Perspectiva / facing del asset | ✅ Resuelto: vista de escenario 3/4. Ver A-10 |
 | D-03 | Licencia del asset pack | ✅ Confirmado por el autor: sin problemas de uso |
 | D-04 | ¿5×5 se siente bien para un duelo, o se queda pequeño? | Playtest |

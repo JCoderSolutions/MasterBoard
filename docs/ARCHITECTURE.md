@@ -169,14 +169,39 @@ docs/               Este documento, GDD, backlog
 
 ---
 
-## A-09 — Orientación: portrait
+## A-09 — Orientación: landscape
 
-**Decisión (resuelve D-01):** portrait, `viewport_width=270`, `viewport_height=480` (se
-intercambian los valores actuales, que están en landscape).
+> **Reabierta (2026-07-28), tras cerrar la Fase 1B.** La versión original de esta decisión
+> fijaba portrait por el estándar del género de deckbuilders móviles (Clash Royale, una
+> mano). Ese género ya no es este juego desde el pivote a duelo de selección simultánea
+> (`GDD.md` v0.2): no hay mano de cartas que sostener abajo, hay un tablero 5×5 y dos kits
+> completos que leer a la vez. El usuario confirmó además que quiere jugarlo con el
+> teléfono en horizontal. Se decide antes de 1.20 porque es el primer punto de la Fase 1C
+> que de verdad necesita el viewport fijado — después de escribir una sola escena habría
+> costado rehacer todo el layout.
 
-**Por qué:** con menús estilo Clash Royale, mano de cartas abajo y una sola mano sosteniendo
-el teléfono, portrait es el estándar del género en móvil. Cambiarlo después implica rehacer
-todo el layout de UI, así que se fija ahora.
+**Decisión (resuelve D-01):** landscape. `viewport_width=480`, `viewport_height=270`,
+`window/handheld/orientation=4` (`SCREEN_SENSOR_LANDSCAPE`): rota entre las dos landscape
+según cómo sostenga el teléfono quien juega, pero nunca cae a portrait a mitad de partida.
+
+**Por qué:** A-10 ya citaba **Into the Breach** y **Fights in Tight Spaces** como referencia
+de la vista de escenario, y las dos son landscape — no es casualidad: dos personajes
+side-view enfrentados a través de un tablero es una composición horizontal por naturaleza.
+Landscape además deja sitio a los paneles de kit de **los dos bandos** a los lados sin que
+compitan verticalmente con el tablero, que es un requisito explícito (R-04, backlog 1.25) y
+en portrait habría significado apilar HUD arriba, tablero en medio y HUD propio abajo en un
+viewport ya angosto.
+
+**Consecuencia negativa aceptada:** se pierde el agarre a una mano de los juegos de cartas
+móviles. Es un coste real, pero el juego ya no se juega con el pulgar sobre una mano de
+cartas — se juega tocando el tablero y dos ranuras de selección, y eso funciona igual con
+las dos manos sosteniendo el teléfono en horizontal.
+
+**Fuera de esta decisión, todavía sin resolver:** cómo se reparten exactamente las barras
+de vida, los paneles de kit y las ranuras de selección dentro del viewport landscape. Eso
+es un problema de layout de HUD (backlog 1.24-1.27), no de orientación, y se decide más
+adelante — con los sprites reales del asset pack ya en el repo (pendiente 0.8) delante para
+juzgarlo, no antes.
 
 ## A-10 — Perspectiva: vista de "escenario" (stage), no top-down puro
 
